@@ -17,6 +17,7 @@
   },
   "files": [
     "dist/adaptor-polka.js",
+    "dist/adaptor-polka.d.ts",
     "package.json"
   ],
   "scripts": {
