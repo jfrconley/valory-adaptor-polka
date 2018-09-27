@@ -1,0 +1,57 @@
+{
+  "name": "valory-adaptor-polka",
+  "version": "1.0.0",
+  "main": "dist/adaptor-polka.js",
+  "typings": "dist/adaptor-polka.d.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^10.11.1",
+    "cz-conventional-changelog": "^2.1.0",
+    "husky": "^1.0.1",
+    "semantic-release": "^15.9.16",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.1",
+    "valory-runtime": "^3.8.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "npm run build",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "release": "semantic-release",
+    "commitmsg": "commitlint -e $GIT_PARAMS"
+  },
+  "dependencies": {
+    "polka": "^0.5.1"
+  },
+  "peerDependencies": {
+    "valory-runtime": "^3.7.0"
+  },
+  "release": {
+    "repositoryUrl": "https://github.com/jfrconley/valory-adaptor-polka.git",
+    "branch": "master",
+    "verifyConditions": [
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ],
+    "publish": [
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ],
+    "success": [],
+    "fail": []
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": "https://github.com/jfrconley/valory-adaptor-polka.git",
+  "keywords": [
+    "valory",
+    "polka"
+  ]
+}
