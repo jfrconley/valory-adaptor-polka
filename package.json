@@ -5,12 +5,14 @@
   "typings": "dist/adaptor-polka.d.ts",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^10.11.1",
+    "@commitlint/config-conventional": "^7.1.2",
+    "@types/node": "10.5.7",
+    "commitlint": "^7.1.2",
     "cz-conventional-changelog": "^2.1.0",
     "husky": "^1.0.1",
     "semantic-release": "^15.9.16",
     "tslint": "^5.11.0",
-    "typescript": "^3.1.1",
+    "typescript": "^3.0.3",
     "valory-runtime": "^3.8.1"
   },
   "scripts": {
@@ -18,8 +20,10 @@
     "pretest": "npm run build",
     "build": "tsc",
     "prepare": "npm run build",
-    "release": "semantic-release",
-    "commitmsg": "commitlint -e $GIT_PARAMS"
+    "release": "semantic-release"
+  },
+  "resolutions": {
+    "@types/node": "10.11.1"
   },
   "dependencies": {
     "polka": "^0.5.1"
@@ -53,5 +57,10 @@
   "keywords": [
     "valory",
     "polka"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
+    }
+  }
 }
