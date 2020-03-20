@@ -4,12 +4,15 @@
 		"experimentalDecorators": true,
 		"pretty": false,
 		"module": "commonjs",
-		"target": "es2017",
+		"target": "es2019",
 		"noImplicitAny": true,
 		"moduleResolution": "node",
 		"declaration": true,
 		"sourceMap": true,
 		"outDir": "dist",
+		"types": [
+			"node"
+		],
 		"baseUrl": ".",
 		"alwaysStrict": true
 	},

@@ -1,56 +1,57 @@
-import {ApiRequest, ApiResponse, ApiServer, HttpMethod, ValoryMetadata} from "valory-runtime";
+import {ApiContext, HttpMethod, ApiAdaptor} from "valory-runtime";
 import {IncomingMessage, ServerResponse} from "http";
 import qs = require("querystring");
 import url = require("url");
 
-const pathReplacer = /{([\S]*?)}/g;
 const polka = require("polka");
+const pathReplacer = /{([\S]*?)}/g;
 
-export class PolkaAdaptor implements ApiServer {
-    public allowDocSite = true;
-    public disableSerialization = false;
-    public locallyRunnable = true;
+export class PolkaAdaptor implements ApiAdaptor {
     private server = polka();
+    private port = 8080;
+    private host?: string;
 
-    public register(path: string, method: HttpMethod, handler: (request: ApiRequest) => (Promise<ApiResponse>)) {
-        const route = `${path}:${HttpMethod[method]}`;
-        path = path.replace(pathReplacer, ":$1");
-        this.server.add(HttpMethod[method], path, (req: IncomingMessage, res: ServerResponse) => {
-            let rawBody: string;
-
-            req.on("data", (chunk: Buffer) => {
-                rawBody = chunk.toString();
-            });
-
-            req.on("end", () => {
-                const parsedUrl = url.parse(req.url, true);
-                const body = attemptParse(req.headers["content-type"], rawBody);
-                const transReq = new ApiRequest({
-                    headers: req.headers,
-                    query: parsedUrl.query,
-                    path: (req as any).params,
-                    route,
-                    body,
-                    rawBody,
-                    formData: body as any,
-                });
-
-                handler(transReq).then((response) => {
-                    const resContentType = response.headers["Content-Type"] || "text/plain";
-                    res.writeHead(response.statusCode, response.headers);
-                    res.end(serialize(resContentType, response.body));
-                });
-            });
-        });
+    constructor(port?: number, host?: string) {
+        this.port = +process.env.PORT || port;
+        this.host = process.env.HOST || host;
     }
 
-    public getExport(metadata: ValoryMetadata, options: any): {valory: ValoryMetadata} {
-        this.server.listen(options.port || process.env.PORT, options.host || process.env.HOST);
-        return {valory: metadata};
+    public register(path: string, method: HttpMethod, handler: (ctx: ApiContext) => Promise<ApiContext>) {
+        const formattedPath = path.replace(pathReplacer, ":$1");
+        this.server.add(method, formattedPath, (req: IncomingMessage, res: ServerResponse) => {
+            let rawBody: string = "";
+
+            req.on("data", (chunk: Buffer) => {
+                rawBody += chunk.toString();
+            });
+
+            req.on("end", async () => {
+                const parsedUrl = url.parse(req.url, true);
+                const body = attemptParse(req.headers["content-type"], rawBody);
+                const ctx = new ApiContext({
+                    headers: req.headers,
+                    queryParams: parsedUrl.query,
+                    pathParams: (req as any).params,
+                    path,
+                    method,
+                    body,
+                    formData: body as any,
+                    rawBody,
+                });
+
+                await handler(ctx);
+                res.writeHead(ctx.response.statusCode, ctx.response.headers);
+                res.end(ctx.serializeResponse())
+            })
+        })
+    }
+
+    public start() {
+        this.server.listen(this.port, this.host)
     }
 
     public shutdown() {
-        this.server.close();
+        this.server.close()
     }
 }
 
@@ -70,15 +71,5 @@ function attemptParse(contentType: string, obj: any): any {
         }
     } catch (err) {
         return obj;
-    }
-}
-
-function serialize(contentType: string, data: any): string {
-    if (data == null) {
-        return "";
-    } else if (typeof data !== "string") {
-        return JSON.stringify(data);
-    } else {
-        return data;
     }
 }
