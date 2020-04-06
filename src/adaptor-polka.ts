@@ -1,6 +1,5 @@
 import {ApiContext, HttpMethod, ApiAdaptor} from "valory-runtime";
 import {IncomingMessage, ServerResponse} from "http";
-import qs = require("querystring");
 import url = require("url");
 
 const polka = require("polka");
@@ -27,23 +26,20 @@ export class PolkaAdaptor implements ApiAdaptor {
 
             req.on("end", async () => {
                 const parsedUrl = url.parse(req.url, true);
-                const body = attemptParse(req.headers["content-type"], rawBody);
                 const ctx = new ApiContext({
                     headers: req.headers,
                     queryParams: parsedUrl.query,
                     pathParams: (req as any).params,
                     path,
                     method,
-                    body,
-                    formData: body as any,
                     rawBody,
                 });
 
                 await handler(ctx);
                 res.writeHead(ctx.response.statusCode, ctx.response.headers);
-                res.end(ctx.serializeResponse())
-            })
-        })
+                res.end(ctx.serializeResponse());
+            });
+        });
     }
 
     public start() {
@@ -52,24 +48,5 @@ export class PolkaAdaptor implements ApiAdaptor {
 
     public shutdown() {
         this.server.close()
-    }
-}
-
-function attemptParse(contentType: string, obj: any): any {
-    if (contentType == null) {
-        return obj;
-    }
-    const parsedContentType = contentType.split(";")[0];
-    try {
-        switch (parsedContentType) {
-            case "application/json":
-                return JSON.parse(obj);
-            case "application/x-www-form-urlencoded":
-                return qs.parse(obj);
-            default:
-                return obj;
-        }
-    } catch (err) {
-        return obj;
     }
 }

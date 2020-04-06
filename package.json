@@ -12,7 +12,8 @@
     "husky": "^4.2.3",
     "semantic-release": "^17.0.4",
     "tslint": "^6.1.0",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "valory-runtime": "^4.0.0-v4.7"
   },
   "files": [
     "dist/adaptor-polka.js",
@@ -30,8 +31,7 @@
     "@types/node": "10.11.1"
   },
   "dependencies": {
-    "polka": "^0.5.2",
-    "valory-runtime": "^4.0.0-v4.2"
+    "polka": "^0.5.2"
   },
   "peerDependencies": {
     "valory-runtime": ">=4"
