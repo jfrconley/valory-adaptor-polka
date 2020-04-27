@@ -1,6 +1,6 @@
 {
   "name": "valory-adaptor-polka",
-  "version": "1.0.0",
+  "version": "2.0.0-beta.2",
   "main": "dist/adaptor-polka.js",
   "typings": "dist/adaptor-polka.d.ts",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "semantic-release": "^17.0.4",
     "tslint": "^6.1.0",
     "typescript": "^3.8.3",
-    "valory-runtime": "^4.0.0-v4.14"
+    "valory-runtime": "^4.0.0-v4.15"
   },
   "files": [
     "dist/adaptor-polka.js",

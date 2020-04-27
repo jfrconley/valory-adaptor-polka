@@ -1,6 +1,5 @@
 import {ApiContext, HttpMethod, ApiAdaptor} from "valory-runtime";
 import {IncomingMessage, ServerResponse} from "http";
-import url = require("url");
 
 const polka = require("polka");
 const pathReplacer = /{([\S]*?)}/g;
@@ -25,10 +24,8 @@ export class PolkaAdaptor implements ApiAdaptor {
             });
 
             req.on("end", async () => {
-                const parsedUrl = url.parse(req.url, true);
                 const ctx = new ApiContext({
                     headers: req.headers,
-                    queryParams: parsedUrl.query,
                     pathParams: (req as any).params,
                     path,
                     method,
