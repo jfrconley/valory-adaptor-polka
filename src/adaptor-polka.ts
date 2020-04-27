@@ -36,7 +36,7 @@ export class PolkaAdaptor implements ApiAdaptor {
                 });
 
                 await handler(ctx);
-                res.writeHead(ctx.response.statusCode, ctx.response.headers);
+                res.writeHead(ctx.response.statusCode, ctx.prepareHeaders());
                 res.end(ctx.serializeResponse());
             });
         });
