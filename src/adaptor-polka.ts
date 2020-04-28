@@ -27,9 +27,10 @@ export class PolkaAdaptor implements ApiAdaptor {
                 const ctx = new ApiContext({
                     headers: req.headers,
                     pathParams: (req as any).params,
-                    url: req.url,
+                    path,
                     method,
                     rawBody,
+                    query: (req as any)._parsedUrl.query
                 });
 
                 await handler(ctx);
